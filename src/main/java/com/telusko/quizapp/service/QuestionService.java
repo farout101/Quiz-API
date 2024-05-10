@@ -1,8 +1,11 @@
 package com.telusko.quizapp.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.telusko.quizapp.dao.QuestionDao;
@@ -14,16 +17,33 @@ public class QuestionService {
     @Autowired
     QuestionDao questionDao;
 
-    public List<Question> getAllQuestions() {
-        return questionDao.findAll();
+    public ResponseEntity<List<Question>> getAllQuestions() {
+        try {
+            return new ResponseEntity<>(questionDao.findAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
     }
 
-    public List<Question> getQuestionsByDiffifulty(String difficulty) {
-        return questionDao.findByDifficultyLevel(difficulty);
+    public ResponseEntity<List<Question>> getQuestionsByDiffifulty(String difficulty) {
+        try {
+            return new ResponseEntity<>(questionDao.findByDifficultyLevel(difficulty), HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
     }
 
-    public String addQuestion(Question question) {
-        questionDao.save(question);
-        return "Data inserted";
+    public ResponseEntity<String> addQuestion(Question question) {
+        try {
+            questionDao.save(question);
+            return new ResponseEntity<>("Operation Success", HttpStatus.CREATED);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>("Operation Failed", HttpStatus.BAD_REQUEST);
     }
 }
